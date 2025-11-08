@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第一章 變數與算式 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第一章｜變數（Variables）與算式（Expressions）</h1>
+      <p>程式的生命週期：讀入 → 處理 → 輸出。打好這個基本功，HKOI 多數題目就能迎刃而解。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>變數是什麼？</h2>
+        <p>把變數想成貼有標籤的箱子。箱子裡放的是資料，標籤則是名稱。Python 不需要事先宣告資料型別，直接賦值即可。</p>
+        <pre><code># 建立變數並放入不同資料
+a = 10              # 整數
+name = "HKOI"       # 字串
+pi = 3.14159        # 浮點數
+is_learning = True  # 布林值</code></pre>
+        <div class="note">
+          <strong>命名技巧：</strong>使用有意義的英文單字，並以小寫與底線組成，例如 <code>total_score</code>。Python 變數不能以數字開頭。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>算式與輸入輸出</h2>
+        <p>大部分 HKOI 題目都會要求你：</p>
+        <ol class="list-clean">
+          <li>使用 <code>input()</code> 讀入資料（預設為字串）。</li>
+          <li>在算式中運用變數進行處理。</li>
+          <li>用 <code>print()</code> 按題目格式輸出。</li>
+        </ol>
+        <pre><code># 經典 A + B 題
+a = int(input())
+b = int(input())
+print(a + b)</code></pre>
+        <div class="note">
+          <strong>注意：</strong><code>input()</code> 回傳值是字串。若要做加減乘除，請先用 <code>int()</code> 或 <code>float()</code> 轉型。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>畢氏定理範例：歐幾里得距離</h2>
+        <p>距離公式：<code>c = √(a² + b²)</code>。Python 用 <code>**</code> 代表次方，用 <code>**0.5</code> 相當於開平方根。</p>
+        <pre><code>a = 3
+b = 4
+c = (a ** 2 + b ** 2) ** 0.5
+print(c)  # 5.0</code></pre>
+        <p>這類題目常見於計算平面距離或幾何判斷。</p>
+      </section>
+
+      <section class="card">
+        <h2>掌握基本算術與運算子</h2>
+        <div class="layout-two-column">
+          <div>
+            <h3>算術運算</h3>
+            <ul class="list-clean">
+              <li><code>+</code> 加法、<code>-</code> 減法、<code>*</code> 乘法、<code>/</code> 浮點除法。</li>
+              <li><code>//</code> 整除，<code>%</code> 取餘數，用於同餘與循環。</li>
+              <li><code>**</code> 次方，例如 <code>2 ** 5 == 32</code>。</li>
+            </ul>
+          </div>
+          <div>
+            <h3>比較與布林運算</h3>
+            <ul class="list-clean">
+              <li><code>==</code> 等於、<code>!=</code> 不等於、<code>&gt;</code> 與 <code>&lt;</code> 比較大小。</li>
+              <li><code>and</code>、<code>or</code>、<code>not</code> 控制條件邏輯。</li>
+              <li>多條件時可以搭配括號確保判斷順序。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>練習：拆解輸入輸出題</h2>
+        <ol class="list-clean">
+          <li>題目給出兩個整數和一個字串，要求輸出字串重複兩次及兩數相加結果。提示：用 <code>int()</code> 轉型，字串可用 <code>*</code> 重複。</li>
+          <li>輸入三個浮點數 <code>a, b, c</code>，輸出等差平均值與等比平均值。提示：等比平均為 <code>(a * b * c) ** (1/3)</code>。</li>
+        </ol>
+        <p>完成後可到下方小測練習，檢查是否掌握每個細節。</p>
+        <a class="btn" href="quiz1.html">完成章節，前往互動測驗 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="index.html">← 回到目錄</a>
+        <a href="chapter2.html">下一章：流程控制 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第二章 流程控制 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第二章｜流程控制與決策</h1>
+      <p>If/Else 判斷與迴圈結構是演算法的骨架，本章整理經典模式與 HKOI 常見應用。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>If / Else 分支</h2>
+        <p>條件判斷是將題目規則轉成程式碼的第一步，可以使用巢狀結構或提早返回，讓邏輯更清楚。</p>
+        <pre><code>score = int(input())
+
+if score >= 90:
+    print("金牌")
+elif score >= 75:
+    print("銀牌")
+elif score >= 60:
+    print("銅牌")
+else:
+    print("繼續努力")</code></pre>
+        <div class="note">
+          <strong>技巧：</strong>先處理條件最嚴格或最簡單的情況，可減少巢狀深度與重複判斷。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>While 與 For 迴圈的選擇</h2>
+        <div class="layout-two-column">
+          <div>
+            <h3>For 迴圈</h3>
+            <p>適合已知迭代次數的情況，例如讀取固定筆數的輸入或枚舉範圍。</p>
+            <pre><code>total = 0
+for _ in range(5):
+    total += int(input())
+print(total)</code></pre>
+          </div>
+          <div>
+            <h3>While 迴圈</h3>
+            <p>條件式不固定或需要逐步逼近答案時使用，例如模擬或直到某狀態為止。</p>
+            <pre><code>n = int(input())
+step = 0
+while n > 1:
+    if n % 2 == 0:
+        n //= 2
+    else:
+        n = 3 * n + 1
+    step += 1
+print(step)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>綜合範例：最大連續區段</h2>
+        <p>題目：輸入一串 0/1 序列，求連續 1 最長長度。</p>
+        <pre><code>s = input().strip()
+best = 0
+current = 0
+
+for ch in s:
+    if ch == "1":
+        current += 1
+        best = max(best, current)
+    else:
+        current = 0
+
+print(best)</code></pre>
+        <p>此題練習了迴圈、條件判斷與變數重設，是初級組常見題型。</p>
+      </section>
+
+      <section class="card">
+        <h2>練習題</h2>
+        <ol class="list-clean">
+          <li>輸入整數 <code>n</code>，輸出 1 到 <code>n</code> 之間所有偶數的平方和。</li>
+          <li>給一串整數，請偵測是否為非遞減序列（每個數字不小於前一項）。</li>
+          <li>模擬石頭遊戲：兩人輪流取 1 或 2 顆，請判斷誰會勝出（假設雙方皆完美策略）。</li>
+        </ol>
+        <p>嘗試自己動手後，再對照題庫中心提供的解題思路。</p>
+        <a class="btn" href="question-bank.html">前往題庫中心 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter1.html">← 回到章一</a>
+        <a href="chapter3.html">章三：迴圈與輸入 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

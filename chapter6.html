@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第六章 資料結構與除錯 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第六章｜資料結構與除錯技巧</h1>
+      <p>熟悉堆疊、佇列、集合／字典等工具，加上系統化的除錯流程，能讓你在紙上與 IDE 之間迅速定位問題。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>堆疊（Stack）與佇列（Queue）</h2>
+        <div class="layout-two-column">
+          <div>
+            <h3>堆疊</h3>
+            <pre><code># 判斷括號是否匹配
+stack = []
+for ch in input().strip():
+    if ch in \"([{\": stack.append(ch)
+    else:
+        if not stack: print(\"NO\"); break
+        top = stack.pop()
+        if top + ch not in (\"()\", \"[]\", \"{}\"):
+            print(\"NO\")
+            break
+else:
+    print(\"YES\" if not stack else \"NO\")</code></pre>
+          </div>
+          <div>
+            <h3>佇列</h3>
+            <pre><code>from collections import deque
+
+q = deque()
+for _ in range(int(input())):
+    cmd = input().split()
+    if cmd[0] == \"push\":
+        q.append(cmd[1])
+    else:
+        print(q.popleft())</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>集合與字典</h2>
+        <p>集合（set）用於快速去重、判斷是否出現過；字典（dict / map）則能儲存鍵值對。</p>
+        <pre><code># 統計單詞出現次數，並按照次數遞減輸出
+from collections import Counter
+words = input().split()
+counter = Counter(words)
+
+for word, cnt in counter.most_common():
+    print(word, cnt)</code></pre>
+        <div class="note">
+          <strong>考試常見：</strong>統計頻率、判斷是否出現過、建立對照表（例如 char → index）都離不開 set 與 dict。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>快速定位 bug</h2>
+        <ul class="list-clean">
+          <li><strong>列印關鍵狀態：</strong>在迴圈內輸出索引、當前值或暫存變數，確認是否符合預期。</li>
+          <li><strong>切分問題：</strong>把函式拆開測試，先確認輸入處理正確，再檢查邏輯。</li>
+          <li><strong>極端測資：</strong>輸入最小值（例如 0 或 1）、最大值、全部相同或完全遞減的資料。</li>
+        </ul>
+        <p>當遇到 Wrong Answer 時，先復刻評測平台的 Sample Input，若 Sample 都過不了，就代表格式或流程仍有漏洞。</p>
+      </section>
+
+      <section class="card">
+        <h2>練習建議</h2>
+        <ol class="list-clean">
+          <li>使用堆疊判斷多種括號是否匹配，並輸出第一次出錯的位置。</li>
+          <li>佇列模擬排隊系統：支援 push、pop、front 查詢與大小查詢。</li>
+          <li>讀入一段文字，輸出前 K 個最常出現的單字（按照頻率與字典序排序）。</li>
+        </ol>
+        <p>錯題完成後可再次回到題庫中心，或挑戰歷屆卷一乙部涉及資料結構的題目。</p>
+        <a class="btn" href="summary.html">前往必背重點 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter5.html">← 回到章五</a>
+        <a href="summary.html">必背重點 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

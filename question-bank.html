@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HKOI 題庫中心 | 初級組</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>HKOI 初級組題庫中心</h1>
+      <p>挑選歷屆 Heat Event 初級組卷一題目，逐題作答並即時批改，鎖定弱項加強複習。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>使用說明</h2>
+        <ul class="list-clean">
+          <li>選擇欲練習的題庫後按「開始練習」，題目會逐一出題。</li>
+          <li>完成全部題目後會自動批改，顯示答對/答錯、正確答案與解析。</li>
+          <li>作答過程可顯示提示、收藏題目，並查看即時進度與最佳連對紀錄。</li>
+          <li>批改後可一鍵重練錯題或回到收藏題庫，集中加強常失分的題目。</li>
+        </ul>
+        <div class="chip-row">
+          <label for="question-set-select" class="badge">題庫選擇</label>
+          <select id="question-set-select" class="btn secondary small"></select>
+          <button id="start-btn" class="btn">開始練習</button>
+        </div>
+      </section>
+
+      <section class="card hidden" id="quiz-card">
+        <div class="badge" id="current-set-title"></div>
+        <p id="current-set-description"></p>
+        <p id="question-counter" class="badge">題目 1 / 1</p>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="correct-counter">答對 0 題</span>
+            <span id="streak-counter">最佳連續 0 題</span>
+          </div>
+        </div>
+        <div id="instant-feedback" class="hidden"></div>
+        <h2 id="question-text"></h2>
+        <pre id="question-code" class="hidden"><code></code></pre>
+        <div class="chip-row" id="quiz-tools">
+          <button id="hint-btn" class="btn secondary small">顯示提示</button>
+          <button id="favorite-btn" class="btn secondary small">加入收藏</button>
+        </div>
+        <div id="hint-text" class="note hidden"></div>
+        <div id="options-list"></div>
+        <button id="next-btn" class="btn" disabled>下一題</button>
+      </section>
+
+      <section class="card hidden" id="result-card">
+        <h2>批改結果</h2>
+        <p id="result-set-title"></p>
+        <p id="quiz-score" class="badge"></p>
+        <p id="result-summary"></p>
+        <ul id="review-list" class="list-clean"></ul>
+        <div class="chip-row">
+          <button id="mistake-btn" class="btn secondary hidden">只練錯題</button>
+          <button id="restart-btn" class="btn secondary">重作此題庫</button>
+          <button id="back-btn" class="btn secondary">回到題庫列表</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const questionSets = {
+      "2024-25-sectionA": {
+        title: "2024/25 Heat Event 卷一 甲部（多項選擇題）",
+        description: "取材自官方卷一甲部 8 題精選，聚焦 Python 與基本演算法觀念。",
+        questions: [
+          {
+            id: "2024A-Q1",
+            question: "在 Python 中，`a = int(input())` 代表什麼？",
+            hint: "記得 input() 讀到的是字串，算術前要轉型。",
+            options: [
+              "讀入一個字串，並轉換成整數存到 a",
+              "讀入一個整數，並轉換成字串存到 a",
+              "輸出變數 a 的值到螢幕",
+              "把變數 a 加 1"
+            ],
+            answer: 0,
+            explanation: "`input()` 會回傳字串，必須先用 `int()` 轉成整數才能進行算術。"
+          },
+          {
+            id: "2024A-Q2",
+            question: "下列程式會輸出什麼？",
+            hint: "想想 `a % b` 代表餘數是多少。",
+            code: "a = 5\nb = 2\nprint(a % b)",
+            options: ["2.5", "2", "1", "0"],
+            answer: 2,
+            explanation: "`%` 為取餘數運算，5 除以 2 的餘數為 1。"
+          },
+          {
+            id: "2024A-Q3",
+            question: "`print(10 / 4)` 與 `print(10 // 4)` 會分別輸出什麼？",
+            hint: "比較 `/` 與 `//` 在 Python 3 中的差異。",
+            options: ["2.5 與 2", "2.5 與 2.5", "2 與 2.5", "2 與 2"],
+            answer: 0,
+            explanation: "`/` 在 Python 3 會得到浮點數，`//` 則是整除。"
+          },
+          {
+            id: "2024A-Q4",
+            question: "以下哪個變數名稱是合法的？",
+            hint: "檢查命名規則：不能開頭是數字，也不能使用保留字。",
+            options: ["1score", "total-score", "score_1", "class"],
+            answer: 2,
+            explanation: "變數不能以數字開頭，也不能含減號；`class` 是保留字。"
+          },
+          {
+            id: "2024A-Q5",
+            question: "關於搜尋演算法的敘述，哪一個是正確的？",
+            hint: "線性搜尋會逐項檢查元素。",
+            options: [
+              "線性搜尋需要先排序後才能使用",
+              "二分搜尋可以作用在任何未排序陣列",
+              "線性搜尋會依序檢查直到找到或全部檢查完",
+              "二分搜尋只適用於長度為 2 的冪次"
+            ],
+            answer: 2,
+            explanation: "線性搜尋逐一檢查元素，不需排序；二分搜尋才需要已排序陣列。"
+          },
+          {
+            id: "2024A-Q6",
+            question: "執行 `print(\"HK\" * 2 + \"OI\")` 的輸出為何？",
+            hint: "字串可以用 `*` 重複，再用 `+` 串接。",
+            options: ["HKOI", "HKHKOI", "HK2OI", "HK HK OI"],
+            answer: 1,
+            explanation: "字串可用 `*` 重複，再用 `+` 串接，因此得到 HKHKOI。"
+          },
+          {
+            id: "2024A-Q7",
+            question: "若 `x = float(\"3.0\")`，`type(x)` 會顯示什麼？",
+            hint: "試著想想 `float()` 轉換後會得到哪種型別。",
+            options: [
+              "<class 'int'>",
+              "<class 'float'>",
+              "<class 'str'>",
+              "<class 'bool'>"
+            ],
+            answer: 1,
+            explanation: "`float()` 會把字串轉成浮點數，因此型別為 `float`。"
+          },
+          {
+            id: "2024A-Q8",
+            question: "程式碼 `print(len(input().strip()))` 的功能是什麼？",
+            hint: "先去除字串首尾空白，再計算長度。",
+            options: [
+              "讀入數字並輸出平方值",
+              "讀入字串後去除首尾空白，再輸出長度",
+              "輸出使用者輸入的第一個字元",
+              "將輸入轉成整數後輸出"
+            ],
+            answer: 1,
+            explanation: "`strip()` 會移除首尾空白，再用 `len()` 計算長度。"
+          }
+        ]
+      },
+      "2023-24-sectionA": {
+        title: "2023/24 Heat Event 卷一 甲部精選（10 題）",
+        description: "摘錄官方卷一前 10 題，涵蓋 C++ 語法、邏輯推理與資料結構概念。",
+        questions: [
+          {
+            id: "2023A-Q1",
+            question: "下列程式的輸出為何？",
+            hint: "依序追蹤各個 if/else 的分支。",
+            code: "int x = 2023;\nif (x == 2023) {\n  x = 2024;\n} else if (x == 2024) {\n  x = 2025;\n}\nif (x == 2025) {\n  x = 2026;\n} else {\n  x = 2023;\n}\ncout << x;",
+            options: ["2023", "2024", "2025", "2026"],
+            answer: 0,
+            explanation: "第一次 if 將 x 設為 2024，第二個 if 的條件不成立，因此落入 else 將 x 設回 2023。"
+          },
+          {
+            id: "2023A-Q2",
+            question: "以下關於 C++ 資料型別的敘述，哪一個正確？",
+            hint: "逐一檢查三句話是否符合常見型別知識。",
+            options: [
+              "bool 只能儲存 true、false、maybe 三種值",
+              "char 只能儲存 'a' 到 'z' 這 26 個字元",
+              "float 能完全精確儲存所有實數",
+              "以上皆非"
+            ],
+            answer: 3,
+            explanation: "bool 只有 true/false，char 能存更多字元，float 也會有精度誤差。"
+          },
+          {
+            id: "2023A-Q3",
+            question: "下列巢狀迴圈執行後 `ans` 為何？",
+            hint: "巢狀迴圈的次數可以用乘法計算。",
+            code: "int ans = 0;\nfor (int i = 0; i < 2; ++i)\n  for (int j = 0; j < 3; ++j)\n    for (int k = 0; k < 4; ++k)\n      ++ans;",
+            options: ["6", "9", "24", "60"],
+            answer: 2,
+            explanation: "總共 2×3×4 = 24 次遞增。"
+          },
+          {
+            id: "2023A-Q4",
+            question: "鮑伯依序順時針旋轉 1°、2°、…、360°，最後面向哪個方向？",
+            hint: "把總角度對 360 取餘即可。",
+            options: ["東", "南", "西", "北"],
+            answer: 1,
+            explanation: "總旋轉角度為 64980°，對 360 取餘為 180°，因此從北轉到南。"
+          },
+          {
+            id: "2023A-Q5",
+            question: "下列程式輸出哪個字元？",
+            hint: "`^ 32` 會在大小寫間切換。",
+            code: "char c = 'd';\nchar b = (c >= 'a' ? c ^ 32 : c) - 2;\ncout << b;",
+            options: ["A", "a", "B", "b"],
+            answer: 2,
+            explanation: "`c ^ 32` 將 'd' 轉為 'D'，再減 2 變成 'B'。"
+          },
+          {
+            id: "2023A-Q6",
+            question: "以下程式輸出什麼？",
+            hint: "注意最小值初始值是否合理。",
+            code: "int a[5] = {3, 1, 4, 1, 5};\nint mina = 0, maxa = 0;\nfor (int i = 0; i < 5; ++i) {\n  if (a[i] > maxa) maxa = a[i];\n  if (a[i] < mina) mina = a[i];\n}\ncout << mina << ' ' << maxa;",
+            options: ["0 5", "1 5", "5 0", "5 1"],
+            answer: 0,
+            explanation: "maxa 最終為 5，而 mina 從未被更新，仍為 0。"
+          },
+          {
+            id: "2023A-Q7",
+            question: "想讓下列迴圈執行 5 次並最後輸出 5，應選擇哪個條件？",
+            hint: "`tc--` 與 `--tc` 執行順序不同。",
+            code: "int tc = 5;\nint count = 0;\nwhile ( condition ) {\n  ++count;\n}\ncout << count;",
+            options: [
+              "condition: tc--    最終 tc = -1",
+              "condition: tc--    最終 tc = 0",
+              "condition: --tc    最終 tc = -1",
+              "condition: --tc    最終 tc = 0"
+            ],
+            answer: 0,
+            explanation: "`tc--` 會先回傳舊值再遞減，因此能執行 5 次並在最後讓 tc 變為 -1。"
+          },
+          {
+            id: "2023A-Q8",
+            question: "移除哪一句敘述才能讓餘下三句在邏輯上連貫？",
+            hint: "列出每人喜歡／討厭的顏色檢查是否衝突。",
+            options: [
+              "i. 愛麗絲討厭藍色。",
+              "ii. 鮑伯喜歡綠色。",
+              "iii. 卡蘿討厭黃色和綠色。",
+              "iv. 戴夫討厭綠色。"
+            ],
+            answer: 1,
+            explanation: "戴夫喜歡紅色且愛麗絲討厭黃、藍，只剩綠色可選，需要移除鮑伯也喜歡綠色的敘述。"
+          },
+          {
+            id: "2023A-Q9",
+            question: "執行下列程式後陣列內容為何？",
+            hint: "觀察內圈比較的是 `a[i]` 與 `a[i+1]`。",
+            code: "int a[5] = {2, 7, 1, 8, 2};\nfor (int i = 0; i < 4; ++i) {\n  for (int j = 0; j <= i; ++j) {\n    if (a[i] > a[i + 1]) {\n      swap(a[i], a[i + 1]);\n    }\n  }\n}\nfor (int i = 0; i < 5; ++i) {\n  cout << a[i] << ' ';\n}",
+            options: ["1 2 2 7 8", "2 1 7 2 8", "2 7 1 2 8", "1 2 7 8 2"],
+            answer: 1,
+            explanation: "只有當 i=1 與 i=3 時會交換，結果為 2 1 7 2 8。"
+          },
+          {
+            id: "2023A-Q10",
+            question: "下列程式輸出為何？",
+            hint: "確認 push/pop 的順序以及堆疊頂端元素。",
+            code: "stack<int> S;\nqueue<int> Q;\nQ.push(6);\nQ.push(5);\nS.push(Q.front());\nS.push(7);\nS.pop();\ncout << Q.size() << ' ' << S.top();",
+            options: ["1 5", "1 7", "2 5", "2 6"],
+            answer: 3,
+            explanation: "佇列仍有兩個元素，堆疊最後留下的頂端元素為 6。"
+          }
+        ]
+      },
+      "2022-23-sectionA2": {
+        title: "2022/23 Heat Event 卷一 甲部（二）精選（9 題）",
+        description: "真題代表題，檢測輸入輸出、迴圈邏輯與數學應用。",
+        questions: [
+          {
+            id: "2022A-Q1",
+            question: "執行下列程式輸出為何？",
+            hint: "整數除法與浮點除法輸出不同型態。",
+            code: "cout << 5 / 4 << ' ' << 5 / 4.0 << ' ' << 5.0 / 4;",
+            options: ["1 1 1", "1 1 1.25", "1 1.25 1", "1 1.25 1.25"],
+            answer: 3,
+            explanation: "整數除法得 1，含浮點數時得到 1.25。"
+          },
+          {
+            id: "2022A-Q2",
+            question: "下列程式輸出為何？",
+            hint: "迴圈跑完後 i 已經加到下一個值。",
+            code: "int i = 0, c = 0;\nfor (i = 1; i <= 5; ++i) {\n  c = c + 1;\n}\ncout << c << ' ' << i;",
+            options: ["5 5", "5 6", "6 5", "6 6"],
+            answer: 1,
+            explanation: "c 計數 5 次，迴圈結束後 i 變為 6。"
+          },
+          {
+            id: "2022A-Q3",
+            question: "x 初始為 2，每步 ±1 且必須維持 1 ≤ x ≤ 4，進行四步後回到 2，有幾種方法？",
+            hint: "列出四步內所有路徑，保持 x 在 1 到 4 之間。",
+            options: ["5", "6", "8", "10"],
+            answer: 0,
+            explanation: "以動態規劃計算，共有 5 條長度 4 的合法路徑回到 2。"
+          },
+          {
+            id: "2022A-Q4",
+            question: "`z = x == y ? x + y : x - y;`，當 y=5 與 y=7 時輸出各為多少？",
+            hint: "`?:` 運算會根據條件選擇加或減。",
+            options: ["0 與 12", "5 與 -2", "10 與 -2", "5 與 2"],
+            answer: 2,
+            explanation: "條件為真時取和，否則相減，因此得到 10 與 -2。"
+          },
+          {
+            id: "2022A-Q5",
+            question: "下列哪段程式能成功編譯？",
+            hint: "C++ 沒有字串乘法或直接加上整數。",
+            options: [
+              "`cout << string(\"123\") * 4;`",
+              "`cout << string(\"123\") + 456;`",
+              "兩者皆可",
+              "皆不可"
+            ],
+            answer: 3,
+            explanation: "C++ 不支援字串乘整數，也不能直接和整數相加。"
+          },
+          {
+            id: "2022A-Q6",
+            question: "執行下列程式，`ans` 最後的值為何？",
+            hint: "`i | 8` 會把第 4 位設為 1。",
+            code: "int ans = 0;\nfor (int i = 0; i < 16; ++i) {\n  ans += i | 8;\n}\ncout << ans;",
+            options: ["120", "184", "216", "248"],
+            answer: 1,
+            explanation: "對 0–7 會加上 8，對 8–15 保持不變，兩部分各為 92，因此總和 184。"
+          },
+          {
+            id: "2022A-Q7",
+            question: "下列程式輸出多少？",
+            hint: "內層遇到 break 只會跳出內層迴圈。",
+            code: "int cnt = 0;\nfor (int i = 0; i < 10; ++i) {\n  for (int j = 0; j < 10; ++j) {\n    if (i == j)\n      break;\n    ++cnt;\n  }\n}\ncout << cnt;",
+            options: ["10", "45", "55", "100"],
+            answer: 1,
+            explanation: "每個 i 只會累計到 j = i - 1，因此總和為 1 + 2 + … + 9 = 45。"
+          },
+          {
+            id: "2022A-Q8",
+            question: "二分搜尋相關敘述哪些為真？",
+            hint: "只要資料已排序，就可以使用二分搜尋。",
+            options: [
+              "只能用在整數陣列",
+              "可以判斷字典序排序的字串陣列是否存在某字串",
+              "若陣列存在相同值就無法使用",
+              "以上皆非"
+            ],
+            answer: 1,
+            explanation: "資料是否排序才是重點，型別不限，且即使有重複值仍可使用。"
+          },
+          {
+            id: "2022A-Q9",
+            question: "8 人圍坐圓桌且愛麗絲與鮑伯不想相鄰，有多少種不同座位安排？",
+            hint: "圓桌排列可先固定一人，再排列剩下的座位。",
+            options: ["2520", "3600", "4320", "5040"],
+            answer: 1,
+            explanation: "總共有 7! = 5040 種座位，將兩人視為一組有 2×6! = 1440 種需排除，剩餘 3600 種。"
+          }
+        ]
+      }
+    };
+
+    const baseSetOrder = Object.keys(questionSets);
+    const questionIndex = new Map();
+    baseSetOrder.forEach(key => {
+      questionSets[key].questions.forEach(question => {
+        if (question.id) {
+          questionIndex.set(question.id, question);
+        }
+      });
+    });
+
+    const FAVORITES_KEY = "hkoi-question-favorites";
+
+    function loadFavorites() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+        return new Set(raw.filter(id => questionIndex.has(id)));
+      } catch (err) {
+        return new Set();
+      }
+    }
+
+    let favorites = loadFavorites();
+    const customSets = {};
+    if (favorites.size > 0) {
+      customSets.favorites = buildFavoritesSet();
+    }
+
+    const setSelect = document.getElementById("question-set-select");
+    const startBtn = document.getElementById("start-btn");
+    const quizCard = document.getElementById("quiz-card");
+    const resultCard = document.getElementById("result-card");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const backBtn = document.getElementById("back-btn");
+    const mistakeBtn = document.getElementById("mistake-btn");
+
+    const setTitleEl = document.getElementById("current-set-title");
+    const setDescEl = document.getElementById("current-set-description");
+    const questionCounterEl = document.getElementById("question-counter");
+    const questionTextEl = document.getElementById("question-text");
+    const questionCodeEl = document.getElementById("question-code");
+    const questionCodeContent = questionCodeEl.querySelector("code");
+    const optionsListEl = document.getElementById("options-list");
+
+    const progressFill = document.getElementById("progress-fill");
+    const correctCounterEl = document.getElementById("correct-counter");
+    const streakCounterEl = document.getElementById("streak-counter");
+    const feedbackEl = document.getElementById("instant-feedback");
+    const hintBtn = document.getElementById("hint-btn");
+    const favoriteBtn = document.getElementById("favorite-btn");
+    const hintTextEl = document.getElementById("hint-text");
+
+    const resultSetTitleEl = document.getElementById("result-set-title");
+    const quizScoreEl = document.getElementById("quiz-score");
+    const resultSummaryEl = document.getElementById("result-summary");
+    const reviewListEl = document.getElementById("review-list");
+
+    let currentSetKey = baseSetOrder[0];
+    let currentSet = null;
+    let currentIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let startTime = 0;
+    let feedbackTimer = null;
+    let hintVisible = false;
+    let userAnswers = [];
+
+    function getCombinedSets() {
+      return { ...questionSets, ...customSets };
+    }
+
+    function populateSetSelect(preferredKey) {
+      const combined = getCombinedSets();
+      const customOrder = ["favorites", "mistakes"];
+      const keys = [
+        ...baseSetOrder,
+        ...customOrder.filter(key => key in customSets),
+        ...Object.keys(customSets).filter(key => !customOrder.includes(key))
+      ].filter((key, index, self) => self.indexOf(key) === index && combined[key]);
+
+      const fallbackKey = keys.find(key => combined[key]) || baseSetOrder[0];
+      const targetKey = preferredKey && combined[preferredKey] ? preferredKey : (combined[currentSetKey] ? currentSetKey : fallbackKey);
+
+      setSelect.innerHTML = "";
+      keys.forEach(key => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = combined[key].title;
+        setSelect.appendChild(option);
+      });
+
+      if (combined[targetKey]) {
+        setSelect.value = targetKey;
+        currentSetKey = targetKey;
+      }
+    }
+
+    populateSetSelect(currentSetKey);
+
+    setSelect.addEventListener("change", () => {
+      currentSetKey = setSelect.value;
+    });
+
+    function updateProgress(answered = currentIndex) {
+      const total = currentSet ? currentSet.questions.length : 1;
+      const percentage = total ? Math.min(100, (answered / total) * 100) : 0;
+      progressFill.style.width = `${percentage}%`;
+      correctCounterEl.textContent = `答對 ${correctCount} 題`;
+      streakCounterEl.textContent = `最佳連續 ${bestStreak} 題`;
+    }
+
+    function showToast(message, type = "info") {
+      if (!feedbackEl) return;
+      if (feedbackTimer) {
+        clearTimeout(feedbackTimer);
+      }
+      feedbackEl.textContent = message;
+      feedbackEl.classList.remove("hidden", "show", "is-wrong");
+      if (type === "error") {
+        feedbackEl.classList.add("is-wrong");
+      }
+      feedbackEl.classList.remove("hidden");
+      setTimeout(() => feedbackEl.offsetHeight, 0); // force reflow
+      feedbackEl.classList.add("show");
+      feedbackTimer = setTimeout(() => {
+        feedbackEl.classList.remove("show");
+        feedbackEl.classList.add("hidden");
+      }, 1800);
+    }
+
+    function flashFeedback(isCorrect, question) {
+      if (isCorrect) {
+        showToast("答對！", "success");
+      } else {
+        showToast(`答錯，正確答案：${question.options[question.answer]}`, "error");
+      }
+    }
+
+    function updateFavoriteButton(question) {
+      if (!question || !question.id) {
+        favoriteBtn.classList.add("hidden");
+        return;
+      }
+      favoriteBtn.classList.remove("hidden");
+      const isFavorite = favorites.has(question.id);
+      favoriteBtn.classList.toggle("active", isFavorite);
+      favoriteBtn.textContent = isFavorite ? "取消收藏" : "加入收藏";
+    }
+
+    function renderQuestion() {
+      const question = currentSet.questions[currentIndex];
+      questionCounterEl.textContent = `題目 ${currentIndex + 1} / ${currentSet.questions.length}`;
+      questionTextEl.textContent = question.question;
+
+      if (question.code) {
+        questionCodeEl.classList.remove("hidden");
+        questionCodeContent.textContent = question.code;
+      } else {
+        questionCodeEl.classList.add("hidden");
+        questionCodeContent.textContent = "";
+      }
+
+      optionsListEl.innerHTML = "";
+      question.options.forEach((optionText, idx) => {
+        const optionId = `option-${currentIndex}-${idx}`;
+        const wrapper = document.createElement("div");
+        wrapper.className = "quiz-option";
+
+        const highlight = document.createElement("div");
+        highlight.className = "highlight";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "quiz-option";
+        input.id = optionId;
+        input.value = idx;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", optionId);
+        label.textContent = optionText;
+
+        input.addEventListener("change", () => {
+          nextBtn.disabled = false;
+        });
+
+        wrapper.appendChild(highlight);
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        optionsListEl.appendChild(wrapper);
+      });
+
+      hintVisible = false;
+      hintBtn.disabled = !question.hint;
+      hintBtn.classList.toggle("hidden", !question.hint);
+      hintBtn.textContent = "顯示提示";
+      hintTextEl.classList.add("hidden");
+      hintTextEl.textContent = question.hint || "";
+      updateFavoriteButton(question);
+      updateProgress(currentIndex);
+      nextBtn.disabled = true;
+    }
+
+    function startSetByKey(key) {
+      const combined = getCombinedSets();
+      if (!combined[key]) {
+        key = baseSetOrder[0];
+      }
+      currentSetKey = key;
+      if (setSelect.value !== key) {
+        setSelect.value = key;
+      }
+      currentSet = combined[key];
+      currentIndex = 0;
+      score = 0;
+      correctCount = 0;
+      currentStreak = 0;
+      bestStreak = 0;
+      userAnswers = [];
+      startTime = Date.now();
+      if (feedbackTimer) {
+        clearTimeout(feedbackTimer);
+      }
+      feedbackEl.classList.add("hidden");
+      hintTextEl.classList.add("hidden");
+      hintTextEl.textContent = "";
+      setTitleEl.textContent = currentSet.title;
+      setDescEl.textContent = currentSet.description;
+      quizCard.classList.remove("hidden");
+      resultCard.classList.add("hidden");
+      updateProgress(0);
+      renderQuestion();
+    }
+
+    function recordAnswer() {
+      const selected = document.querySelector("input[name='quiz-option']:checked");
+      if (!selected) return false;
+      const chosenIndex = Number(selected.value);
+      const question = currentSet.questions[currentIndex];
+      userAnswers.push(chosenIndex);
+      const isCorrect = chosenIndex === question.answer;
+      if (isCorrect) {
+        score += 1;
+        correctCount += 1;
+        currentStreak += 1;
+        bestStreak = Math.max(bestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+      updateProgress(currentIndex + 1);
+      flashFeedback(isCorrect, question);
+      return true;
+    }
+
+    function formatDuration(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function showResults() {
+      quizCard.classList.add("hidden");
+      resultCard.classList.remove("hidden");
+      updateProgress(currentSet.questions.length);
+      resultSetTitleEl.textContent = currentSet.title;
+      quizScoreEl.textContent = `得分 ${score} / ${currentSet.questions.length}`;
+      const durationSeconds = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+      resultSummaryEl.textContent = `最佳連續答對 ${bestStreak} 題 · 作答時間 ${formatDuration(durationSeconds)}`;
+
+      reviewListEl.innerHTML = "";
+      const mistakes = [];
+      currentSet.questions.forEach((question, idx) => {
+        const li = document.createElement("li");
+        const isCorrect = userAnswers[idx] === question.answer;
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = isCorrect ? "✔ 答對" : "✖ 需複習";
+        li.appendChild(badge);
+
+        const title = document.createElement("p");
+        title.innerHTML = `<strong>第 ${idx + 1} 題：</strong>${question.question}`;
+        li.appendChild(title);
+
+        if (question.code) {
+          const codeBlock = document.createElement("pre");
+          codeBlock.innerHTML = `<code>${question.code}</code>`;
+          li.appendChild(codeBlock);
+        }
+
+        const userAnswerText = typeof userAnswers[idx] === "number" ? question.options[userAnswers[idx]] : "未作答";
+        const userAnswer = document.createElement("p");
+        userAnswer.innerHTML = `你的答案：${userAnswerText}`;
+        li.appendChild(userAnswer);
+
+        const correctAnswer = document.createElement("p");
+        correctAnswer.innerHTML = `正確答案：<span class="answer-key">${question.options[question.answer]}</span>`;
+        li.appendChild(correctAnswer);
+
+        if (question.explanation) {
+          const explain = document.createElement("p");
+          explain.textContent = question.explanation;
+          li.appendChild(explain);
+        }
+
+        reviewListEl.appendChild(li);
+        if (!isCorrect) {
+          mistakes.push(question);
+        }
+      });
+
+      if (mistakes.length > 0) {
+        customSets.mistakes = buildMistakeSet(mistakes);
+        mistakeBtn.classList.remove("hidden");
+      } else {
+        delete customSets.mistakes;
+        mistakeBtn.classList.add("hidden");
+      }
+      populateSetSelect(currentSetKey);
+    }
+
+    function resetState() {
+      quizCard.classList.add("hidden");
+      resultCard.classList.add("hidden");
+      if (feedbackTimer) {
+        clearTimeout(feedbackTimer);
+      }
+      feedbackEl.classList.add("hidden");
+      progressFill.style.width = "0%";
+      correctCounterEl.textContent = "答對 0 題";
+      streakCounterEl.textContent = "最佳連續 0 題";
+      mistakeBtn.classList.add("hidden");
+    }
+
+    function saveFavorites() {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
+      rebuildFavoriteSet();
+    }
+
+    function buildFavoritesSet() {
+      const questions = [];
+      favorites.forEach(id => {
+        const question = questionIndex.get(id);
+        if (question) {
+          questions.push(question);
+        }
+      });
+      return {
+        title: `收藏題庫（${questions.length} 題）`,
+        description: "回顧已收藏的題目，持續複習重要概念。",
+        questions
+      };
+    }
+
+    function buildMistakeSet(questions) {
+      return {
+        title: `錯題複習（${questions.length} 題）`,
+        description: "重新練習剛才答錯的題目，立即補強薄弱環節。",
+        questions
+      };
+    }
+
+    function rebuildFavoriteSet() {
+      if (favorites.size > 0) {
+        customSets.favorites = buildFavoritesSet();
+      } else {
+        delete customSets.favorites;
+      }
+      populateSetSelect(currentSetKey);
+    }
+
+    startBtn.addEventListener("click", () => {
+      startSetByKey(setSelect.value);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!recordAnswer()) return;
+      currentIndex += 1;
+      if (currentIndex < currentSet.questions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    restartBtn.addEventListener("click", () => {
+      startSetByKey(currentSetKey);
+    });
+
+    backBtn.addEventListener("click", () => {
+      resetState();
+    });
+
+    mistakeBtn.addEventListener("click", () => {
+      if (!customSets.mistakes) return;
+      populateSetSelect("mistakes");
+      startSetByKey("mistakes");
+    });
+
+    hintBtn.addEventListener("click", () => {
+      if (hintBtn.disabled || !currentSet) return;
+      hintVisible = !hintVisible;
+      if (hintVisible) {
+        const question = currentSet.questions[currentIndex];
+        hintTextEl.textContent = question.hint || "此題暫無提示。";
+        hintTextEl.classList.remove("hidden");
+        hintBtn.textContent = "隱藏提示";
+      } else {
+        hintTextEl.classList.add("hidden");
+        hintBtn.textContent = "顯示提示";
+      }
+    });
+
+    favoriteBtn.addEventListener("click", () => {
+      if (!currentSet) return;
+      const question = currentSet.questions[currentIndex];
+      if (!question.id) return;
+      if (favorites.has(question.id)) {
+        favorites.delete(question.id);
+        showToast("已取消收藏", "success");
+      } else {
+        favorites.add(question.id);
+        showToast("已加入收藏", "success");
+      }
+      updateFavoriteButton(question);
+      saveFavorites();
+    });
+  </script>
+</body>
+</html>

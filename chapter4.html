@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第四章 陣列與搜尋 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第四章｜陣列與搜尋策略</h1>
+      <p>能夠快速處理串列、理解線性搜尋與二分搜尋，是應對絕大多數資料處理題的核心技能。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>陣列／串列常用技巧</h2>
+        <ul class="list-clean">
+          <li><strong>初始化：</strong>Python 可用 <code>[0] * n</code> 建立固定長度；C++ 使用 <code>vector<int> a(n)</code>。</li>
+          <li><strong>遍歷：</strong>同時需要索引與值時，Python 可用 <code>for idx, val in enumerate(arr)</code>。</li>
+          <li><strong>切片與複製：</strong><code>arr[a:b]</code> 會建立新串列，考試中避免不必要的複製以節省時間。</li>
+        </ul>
+        <pre><code># 篩選大於平均值的元素
+arr = list(map(int, input().split()))
+avg = sum(arr) / len(arr)
+filtered = [x for x in arr if x > avg]
+print(len(filtered), filtered)</code></pre>
+      </section>
+
+      <section class="card">
+        <h2>線性搜尋與早停</h2>
+        <p>線性搜尋簡單可靠，若搭配早停可以減少不必要的比較。</p>
+        <pre><code>target = int(input())
+arr = list(map(int, input().split()))
+
+found = -1
+for i, val in enumerate(arr):
+    if val == target:
+        found = i
+        break
+
+print(found)</code></pre>
+        <div class="note">
+          <strong>Tip：</strong>輸出 -1 表示未找到是 HKOI 常見格式，務必與題目規定一致。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>二分搜尋與前置條件</h2>
+        <p>二分搜尋的重點是資料必須已排序，可用 Python 的 <code>bisect</code> 或自行實作。</p>
+        <pre><code>import bisect
+
+arr = sorted(map(int, input().split()))
+x = int(input())
+
+pos = bisect.bisect_left(arr, x)
+if pos < len(arr) and arr[pos] == x:
+    print("Found at", pos)
+else:
+    print("Not found")</code></pre>
+        <p>若需要實作 C++ 版本，可使用 <code>std::lower_bound</code>；計算上下界時記得處理「找不到」的情況。</p>
+      </section>
+
+      <section class="card">
+        <h2>練習建議</h2>
+        <ol class="list-clean">
+          <li>輸入 N 與 N 個整數，輸出所有不同的數並依照出現頻率排序。</li>
+          <li>給定已排序的整數串列與多個查詢，回傳每個查詢值的出現次數。</li>
+          <li>模擬排序後的搜尋：先將原始資料排序，再找出最接近的兩個數字。</li>
+        </ol>
+        <p>完成後可在題庫中心搜尋「Binary Search」「Frequency Table」等關鍵字進一步練習。</p>
+        <a class="btn" href="question-bank.html">開啟題庫中心 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter3.html">← 回到章三</a>
+        <a href="chapter5.html">章五：排序與複雜度 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

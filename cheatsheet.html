@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>語法速查表 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Python 語法速查表</h1>
+      <p>考前最後五分鐘，用這份表快速回顧輸入輸出、常用運算符與邏輯語法。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>輸入與輸出</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>語法</th>
+              <th>說明</th>
+              <th>範例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>input()</code></td>
+              <td>讀入一行字串</td>
+              <td><code>name = input()</code></td>
+            </tr>
+            <tr>
+              <td><code>int()</code></td>
+              <td>把字串轉成整數</td>
+              <td><code>a = int(input())</code></td>
+            </tr>
+            <tr>
+              <td><code>map(int, input().split())</code></td>
+              <td>空白分隔多個整數</td>
+              <td><code>a, b = map(int, input().split())</code></td>
+            </tr>
+            <tr>
+              <td><code>print()</code></td>
+              <td>輸出，預設結尾為換行</td>
+              <td><code>print("Ans:", value)</code></td>
+            </tr>
+            <tr>
+              <td><code>print(value, end="")</code></td>
+              <td>控制輸出結尾，避免多餘換行</td>
+              <td><code>print(x, end=" ")</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>常用運算符</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>符號</th>
+              <th>名稱</th>
+              <th>範例（a=10, b=3）</th>
+              <th>結果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>+</code></td>
+              <td>加法</td>
+              <td><code>a + b</code></td>
+              <td><code>13</code></td>
+            </tr>
+            <tr>
+              <td><code>-</code></td>
+              <td>減法</td>
+              <td><code>a - b</code></td>
+              <td><code>7</code></td>
+            </tr>
+            <tr>
+              <td><code>*</code></td>
+              <td>乘法</td>
+              <td><code>a * b</code></td>
+              <td><code>30</code></td>
+            </tr>
+            <tr>
+              <td><code>/</code></td>
+              <td>除法（浮點數）</td>
+              <td><code>a / b</code></td>
+              <td><code>3.333...</code></td>
+            </tr>
+            <tr>
+              <td><code>//</code></td>
+              <td>整除</td>
+              <td><code>a // b</code></td>
+              <td><code>3</code></td>
+            </tr>
+            <tr>
+              <td><code>%</code></td>
+              <td>取餘數</td>
+              <td><code>a % b</code></td>
+              <td><code>1</code></td>
+            </tr>
+            <tr>
+              <td><code>**</code></td>
+              <td>次方</td>
+              <td><code>a ** b</code></td>
+              <td><code>1000</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>比較與布林運算</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>語法</th>
+              <th>說明</th>
+              <th>範例</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>==</code></td>
+              <td>等於</td>
+              <td><code>a == b</code></td>
+            </tr>
+            <tr>
+              <td><code>!=</code></td>
+              <td>不等於</td>
+              <td><code>a != b</code></td>
+            </tr>
+            <tr>
+              <td><code>&gt;</code>, <code>&lt;</code></td>
+              <td>大於、小於</td>
+              <td><code>a &gt; b</code></td>
+            </tr>
+            <tr>
+              <td><code>&gt;=</code>, <code>&lt;=</code></td>
+              <td>大於等於、小於等於</td>
+              <td><code>a &gt;= b</code></td>
+            </tr>
+            <tr>
+              <td><code>and</code></td>
+              <td>布林 AND</td>
+              <td><code>(a &gt; 0) and (b &gt; 0)</code></td>
+            </tr>
+            <tr>
+              <td><code>or</code></td>
+              <td>布林 OR</td>
+              <td><code>(a &gt; 0) or (b &gt; 0)</code></td>
+            </tr>
+            <tr>
+              <td><code>not</code></td>
+              <td>布林 NOT</td>
+              <td><code>not (a == b)</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>常用技巧片段</h2>
+        <pre><code># 讀入 n 與串列
+n = int(input())
+arr = list(map(int, input().split()))
+
+# 檢查是否為遞增
+is_sorted = all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
+
+# 前綴和
+prefix = [0]
+for value in arr:
+    prefix.append(prefix[-1] + value)
+
+# 計算區間 [l, r) 的和
+def range_sum(l, r):
+    return prefix[r] - prefix[l]</code></pre>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="index.html">← 回首頁</a>
+        <a href="question-bank.html">刷題前往題庫 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第三章 迴圈與輸入技巧 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第三章｜迴圈與輸入輸出技巧</h1>
+      <p>進階迴圈模板、批次輸入與 break/continue 的運用，是處理大量資料與模擬題的必備能力。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>常用迴圈模板</h2>
+        <p>記熟幾個迴圈模板，可以在考場快速搬運與調整。</p>
+        <div class="layout-two-column">
+          <div>
+            <h3>固定次數迴圈</h3>
+            <pre><code># 讀入 n 個整數並計算總和
+n = int(input())
+total = 0
+for _ in range(n):
+    total += int(input())
+print(total)</code></pre>
+          </div>
+          <div>
+            <h3>直到條件成立為止</h3>
+            <pre><code># Sentinel input：直到輸入 0 停止
+while True:
+    x = int(input())
+    if x == 0:
+        break
+    # 處理 x
+</code></pre>
+          </div>
+        </div>
+        <div class="note">
+          <strong>Tip：</strong>當輸入不確定有多少筆時，會以「直到條件成立」的 while 迴圈或 for/else 結構搭配 break 來處理。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>批次輸入與字串處理</h2>
+        <p>大量數據通常在同一行或同一段提供，可以善用 <code>split()</code>、<code>map()</code> 與串列理解。</p>
+        <pre><code># 讀入一整行並轉成整數串列
+arr = list(map(int, input().split()))
+
+# 讀入多行，直到 EOF
+import sys
+numbers = [int(line) for line in sys.stdin if line.strip()]
+</code></pre>
+        <div class="note">
+          <strong>提醒：</strong>使用 <code>sys.stdin</code> 時，記得在本地測試先把測資貼到檔案或重新導向，否則程式會卡住等待輸入。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>break、continue 與 else</h2>
+        <p>Python 的迴圈支援 <code>for...else</code>：只有在迴圈沒有被 break 打斷時才會執行 else。</p>
+        <pre><code># 判斷是否為質數
+n = int(input())
+
+for i in range(2, int(n ** 0.5) + 1):
+    if n % i == 0:
+        print("Composite")
+        break
+else:
+    print("Prime")</code></pre>
+        <p>這是篩質數、搜尋第一個符合條件元素時常用的寫法，能讓程式更清楚好讀。</p>
+      </section>
+
+      <section class="card">
+        <h2>練習建議</h2>
+        <ol class="list-clean">
+          <li>連續輸入多筆資料，遇到空行停止，輸出每 5 筆的平均值。</li>
+          <li>給定一串數字與指令（例如 L/R 表示左轉／右轉），模擬角色在平面上的移動並輸出最終座標。</li>
+          <li>讀入多組測資，每組包含 n 與 n 個數字，輸出每組的最大值與總和。</li>
+        </ol>
+        <p>完成後可搭配題庫中心或歷屆題目（如「配對括號」「找連續 1 長度」等）加強練習。</p>
+        <a class="btn" href="question-bank.html">直接前往題庫中心 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter2.html">← 回到章二</a>
+        <a href="chapter4.html">章四：陣列與搜尋 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>

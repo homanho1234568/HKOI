@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第一章互動小測 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第一章互動小測</h1>
+      <p>8 題多選題，檢查你對輸入輸出、變數與算式的掌握度。完成後附上詳解，幫你找到需要補強的概念。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>作答說明</h2>
+        <div class="note">
+          <ul class="list-clean">
+            <li>每題只有一個正確答案。</li>
+            <li>選擇答案後按「下一題」，最後會顯示得分與詳解。</li>
+            <li>得分紀錄僅儲存在本機，不會上傳伺服器。</li>
+          </ul>
+        </div>
+
+        <div id="quiz-shell">
+          <div id="question-area">
+            <p id="question-counter" class="badge">題目 1 / 8</p>
+            <h2 id="question-text"></h2>
+            <pre id="question-code" class="hidden"><code></code></pre>
+            <div id="options-list"></div>
+            <button id="next-btn" class="btn" type="button" disabled>下一題</button>
+          </div>
+
+          <div id="result-area" class="hidden">
+            <h2>作答結果</h2>
+            <p id="quiz-score" class="badge">得分 0 / 8</p>
+            <ul id="quiz-review" class="list-clean"></ul>
+            <div class="chip-row">
+              <button id="restart-btn" class="btn secondary" type="button">再測一次</button>
+              <a class="btn" href="chapter1.html">回到章節重讀</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter1.html">← 返回章節</a>
+        <a href="summary.html">查看必背重點 →</a>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const quizData = [
+      {
+        question: "在 Python 中，`a = int(input())` 代表什麼？",
+        options: [
+          "讀入一個字串，並轉換成整數存到 a",
+          "讀入一個整數，並轉換成字串存到 a",
+          "輸出變數 a 的值到螢幕",
+          "把變數 a 加 1"
+        ],
+        answer: 0,
+        explanation: "`input()` 讀到的是字串，需要用 `int()` 轉成整數後才能做算術。"
+      },
+      {
+        question: "下列程式會輸出什麼？",
+        code: "a = 5\nb = 2\nprint(a % b)",
+        options: ["2.5", "2", "1", "0"],
+        answer: 2,
+        explanation: "`%` 取餘數，5 除以 2 的餘數為 1。"
+      },
+      {
+        question: "`print(10 / 4)` 與 `print(10 // 4)` 各會輸出什麼？",
+        options: ["2.5 與 2", "2.5 與 2.5", "2 與 2.5", "2 與 2"],
+        answer: 0,
+        explanation: "`/` 永遠回傳浮點數，`//` 是整除，結果為 2。"
+      },
+      {
+        question: "以下哪個變數名稱是合法的？",
+        options: ["1score", "total-score", "score_1", "class"],
+        answer: 2,
+        explanation: "變數不能以數字開頭，也不能含有連字號；`class` 是保留字。"
+      },
+      {
+        question: "下列哪個敘述正確？",
+        options: [
+          "線性搜尋要先把陣列排序",
+          "二分搜尋可以用在任何未排序陣列",
+          "線性搜尋會依序檢查直到找到或結束",
+          "二分搜尋只適用於長度為 2 的倍數的陣列"
+        ],
+        answer: 2,
+        explanation: "線性搜尋直接逐一檢查元素；需要排序的是二分搜尋。"
+      },
+      {
+        question: "執行 `print(\"HK\" * 2 + \"OI\")` 的輸出為何？",
+        options: ["HKOI", "HKHKOI", "HK2OI", "HK HK OI"],
+        answer: 1,
+        explanation: "字串可用 `*` 重複，再用 `+` 串接，結果是 HKHKOI。"
+      },
+      {
+        question: "若 `x = float(\"3.0\")`，`type(x)` 會顯示什麼？",
+        options: [
+          "&lt;class 'int'&gt;",
+          "&lt;class 'float'&gt;",
+          "&lt;class 'str'&gt;",
+          "&lt;class 'bool'&gt;"
+        ],
+        answer: 1,
+        explanation: "`float()` 會把字串轉成浮點數，因此型別為 `float`。"
+      },
+      {
+        question: "程式碼 `print(len(input().strip()))` 的功能是？",
+        options: [
+          "讀入數字並輸出平方值",
+          "讀入字串後去除首尾空白，再輸出長度",
+          "輸出使用者輸入的第一個字元",
+          "將輸入轉成整數後輸出"
+        ],
+        answer: 1,
+        explanation: "`strip()` 去掉字串前後的空白，再用 `len()` 取得長度。"
+      }
+    ];
+
+    let index = 0;
+    let score = 0;
+    let answers = [];
+
+    const counterEl = document.getElementById("question-counter");
+    const questionTextEl = document.getElementById("question-text");
+    const questionCodeEl = document.getElementById("question-code");
+    const codeContentEl = questionCodeEl.querySelector("code");
+    const optionsListEl = document.getElementById("options-list");
+    const nextBtn = document.getElementById("next-btn");
+    const resultArea = document.getElementById("result-area");
+    const questionArea = document.getElementById("question-area");
+    const scoreEl = document.getElementById("quiz-score");
+    const reviewEl = document.getElementById("quiz-review");
+    const restartBtn = document.getElementById("restart-btn");
+
+    function renderQuestion() {
+      nextBtn.disabled = true;
+      const item = quizData[index];
+      counterEl.textContent = `題目 ${index + 1} / ${quizData.length}`;
+      questionTextEl.textContent = item.question;
+
+      if (item.code) {
+        questionCodeEl.classList.remove("hidden");
+        codeContentEl.textContent = item.code;
+      } else {
+        questionCodeEl.classList.add("hidden");
+      }
+
+      optionsListEl.innerHTML = "";
+      item.options.forEach((opt, optIndex) => {
+        const optionId = `q${index}-opt${optIndex}`;
+        const wrapper = document.createElement("div");
+        wrapper.className = "quiz-option";
+
+        const highlight = document.createElement("div");
+        highlight.className = "highlight";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "question";
+        input.id = optionId;
+        input.value = optIndex;
+
+        const label = document.createElement("label");
+        label.setAttribute("for", optionId);
+        label.textContent = opt;
+
+        input.addEventListener("change", () => {
+          nextBtn.disabled = false;
+        });
+
+        wrapper.appendChild(highlight);
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        optionsListEl.appendChild(wrapper);
+      });
+
+      nextBtn.textContent = index === quizData.length - 1 ? "提交作答" : "下一題";
+    }
+
+    function showResult() {
+      questionArea.classList.add("hidden");
+      resultArea.classList.remove("hidden");
+      scoreEl.textContent = `得分 ${score} / ${quizData.length}`;
+
+      reviewEl.innerHTML = "";
+      quizData.forEach((item, idx) => {
+        const li = document.createElement("li");
+        const isCorrect = answers[idx] === item.answer;
+        li.innerHTML = `
+          <div class="badge">${isCorrect ? "✔ 正確" : "✖ 需複習"}</div>
+          <p><strong>第 ${idx + 1} 題：</strong>${item.question}</p>
+          ${item.code ? `<pre><code>${item.code}</code></pre>` : ""}
+          <p>你的答案：${item.options[answers[idx]] ?? "未作答"}</p>
+          <p>正解：<span class="answer-key">${item.options[item.answer]}</span></p>
+          <p>${item.explanation}</p>
+        `;
+        reviewEl.appendChild(li);
+      });
+    }
+
+    nextBtn.addEventListener("click", () => {
+      const chosen = document.querySelector("input[name='question']:checked");
+      if (!chosen) {
+        return;
+      }
+      const selectedIndex = Number(chosen.value);
+      answers.push(selectedIndex);
+      if (selectedIndex === quizData[index].answer) {
+        score += 1;
+      }
+
+      index += 1;
+      if (index < quizData.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener("click", () => {
+      index = 0;
+      score = 0;
+      answers = [];
+      questionArea.classList.remove("hidden");
+      resultArea.classList.add("hidden");
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>

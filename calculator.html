@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公式轉碼工具 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>HKOI 公式轉碼工具</h1>
+      <p>輸入題目中的數值，立即計算並同步產出 Python 與 C++ 範例程式，考場推算更俐落。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>選擇計算公式</h2>
+        <div class="layout-two-column">
+          <div>
+            <label for="formula-select" class="badge">常用題型</label>
+            <select id="formula-select" class="btn secondary">
+              <option value="pythagoras">畢氏定理（平面距離）</option>
+              <option value="circle">圓的面積與周界</option>
+              <option value="rectangle">矩形面積與周界</option>
+              <option value="modulo">同餘（取餘數）</option>
+            </select>
+            <div id="inputs-container" class="chip-row"></div>
+            <button id="calculate-btn" class="btn" type="button">計算並產生程式碼</button>
+            <div id="result-output" class="note" style="margin-top:16px;">請先輸入數值再按下按鈕。</div>
+          </div>
+
+          <div>
+            <h3>提示</h3>
+            <ul class="list-clean">
+              <li>欄位會依公式自動變化。</li>
+              <li>產出的程式碼可直接貼進 judge，請自行處理輸入部分。</li>
+              <li>若輸入無效數值（如除數為 0）會顯示錯誤訊息。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>程式碼輸出</h2>
+        <div class="layout-two-column">
+          <div>
+            <h3>Python</h3>
+            <pre><code id="python-code"># 選擇公式後會顯示程式碼</code></pre>
+          </div>
+          <div>
+            <h3>C++</h3>
+            <pre><code id="cpp-code">// 選擇公式後會顯示程式碼</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="index.html">← 回到目錄</a>
+        <a href="question-bank.html">前往題庫中心 →</a>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    const formulas = {
+      pythagoras: {
+        inputs: [
+          { id: "x1", label: "點 A 的 x", placeholder: "x1" },
+          { id: "y1", label: "點 A 的 y", placeholder: "y1" },
+          { id: "x2", label: "點 B 的 x", placeholder: "x2" },
+          { id: "y2", label: "點 B 的 y", placeholder: "y2" }
+        ],
+        calculate(values) {
+          const dx = values.x1 - values.x2;
+          const dy = values.y1 - values.y2;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          return `兩點距離 = ${dist.toFixed(4)}`;
+        },
+        python(values) {
+          return `# Python: 畢氏定理\nx1 = ${values.x1}\ny1 = ${values.y1}\nx2 = ${values.x2}\ny2 = ${values.y2}\ndistance = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5\nprint(distance)`;
+        },
+        cpp(values) {
+          return `// C++: 畢氏定理\ndouble x1 = ${values.x1};\ndouble y1 = ${values.y1};\ndouble x2 = ${values.x2};\ndouble y2 = ${values.y2};\ndouble distance = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));\ncout << distance;`;
+        }
+      },
+      circle: {
+        inputs: [
+          { id: "r", label: "半徑 r", placeholder: "r" }
+        ],
+        calculate(values) {
+          const r = values.r;
+          const pi = Math.PI;
+          const area = pi * r * r;
+          const circum = 2 * pi * r;
+          return `面積 = ${area.toFixed(4)}，周界 = ${circum.toFixed(4)}`;
+        },
+        python(values) {
+          return `# Python: 圓形計算\nimport math\nr = ${values.r}\narea = math.pi * r ** 2\ncircumference = 2 * math.pi * r\nprint(area)\nprint(circumference)`;
+        },
+        cpp(values) {
+          return `// C++: 圓形計算\ndouble r = ${values.r};\ndouble area = M_PI * r * r;\ndouble circumference = 2 * M_PI * r;\ncout << area << "\\n" << circumference;`;
+        }
+      },
+      rectangle: {
+        inputs: [
+          { id: "l", label: "長度 L", placeholder: "L" },
+          { id: "w", label: "寬度 W", placeholder: "W" }
+        ],
+        calculate(values) {
+          const area = values.l * values.w;
+          const perimeter = 2 * (values.l + values.w);
+          return `面積 = ${area}，周界 = ${perimeter}`;
+        },
+        python(values) {
+          return `# Python: 矩形\nl = ${values.l}\nw = ${values.w}\narea = l * w\nperimeter = 2 * (l + w)\nprint(area)\nprint(perimeter)`;
+        },
+        cpp(values) {
+          return `// C++: 矩形\ndouble l = ${values.l};\ndouble w = ${values.w};\ndouble area = l * w;\ndouble perimeter = 2 * (l + w);\ncout << area << "\\n" << perimeter;`;
+        }
+      },
+      modulo: {
+        inputs: [
+          { id: "a", label: "被除數 a", placeholder: "a" },
+          { id: "b", label: "除數 b", placeholder: "b" }
+        ],
+        calculate(values) {
+          if (values.b === 0) {
+            return "錯誤：除數不可為 0";
+          }
+          return `${values.a} mod ${values.b} = ${values.a % values.b}`;
+        },
+        python(values) {
+          return `# Python: 同餘\na = ${values.a}\nb = ${values.b}\nprint(a % b)`;
+        },
+        cpp(values) {
+          return `// C++: 同餘\nint a = ${values.a};\nint b = ${values.b};\ncout << (a % b);`;
+        }
+      }
+    };
+
+    const select = document.getElementById("formula-select");
+    const inputsContainer = document.getElementById("inputs-container");
+    const resultOutput = document.getElementById("result-output");
+    const pythonCode = document.getElementById("python-code");
+    const cppCode = document.getElementById("cpp-code");
+
+    function renderInputs() {
+      const formula = formulas[select.value];
+      inputsContainer.innerHTML = "";
+      formula.inputs.forEach(({ id, label, placeholder }) => {
+        const fieldWrapper = document.createElement("div");
+        fieldWrapper.className = "chip";
+        fieldWrapper.style.display = "flex";
+        fieldWrapper.style.flexDirection = "column";
+        fieldWrapper.style.alignItems = "flex-start";
+        fieldWrapper.style.gap = "6px";
+
+        const wrapper = document.createElement("label");
+        wrapper.className = "badge";
+        wrapper.style.cursor = "text";
+        wrapper.htmlFor = id;
+        wrapper.textContent = label;
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = id;
+        input.placeholder = placeholder;
+        input.step = "any";
+        input.className = "btn secondary small";
+        input.style.width = "140px";
+        input.style.justifyContent = "center";
+
+        fieldWrapper.appendChild(wrapper);
+        fieldWrapper.appendChild(input);
+        inputsContainer.appendChild(fieldWrapper);
+      });
+
+      resultOutput.textContent = "請輸入數值後按下按鈕。";
+      resultOutput.style.background = "rgba(155, 91, 255, 0.18)";
+      pythonCode.textContent = "# 選擇公式後會顯示程式碼";
+      cppCode.textContent = "// 選擇公式後會顯示程式碼";
+    }
+
+    function handleCalculate() {
+      const formula = formulas[select.value];
+      const values = {};
+      let valid = true;
+
+      formula.inputs.forEach(({ id }) => {
+        const field = document.getElementById(id);
+        const value = Number(field.value);
+        if (Number.isNaN(value)) {
+          valid = false;
+        }
+        values[id] = value;
+      });
+
+      if (!valid) {
+        resultOutput.textContent = "請確認所有欄位都填入有效數字。";
+        resultOutput.style.background = "rgba(255, 112, 150, 0.2)";
+        return;
+      }
+
+      const text = formula.calculate(values);
+      if (text.startsWith("錯誤")) {
+        resultOutput.textContent = text;
+        resultOutput.style.background = "rgba(255, 112, 150, 0.2)";
+      } else {
+        resultOutput.textContent = text;
+        resultOutput.style.background = "rgba(123, 255, 176, 0.18)";
+      }
+
+      pythonCode.textContent = formula.python(values);
+      cppCode.textContent = formula.cpp(values);
+    }
+
+    document.getElementById("calculate-btn").addEventListener("click", handleCalculate);
+    select.addEventListener("change", renderInputs);
+    renderInputs();
+  </script>
+</body>
+</html>

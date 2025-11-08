@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第五章 排序與複雜度 | HKOI 初級組衝刺站</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>第五章｜排序與複雜度</h1>
+      <p>懂得選擇適合的排序方法與估算複雜度，能大幅提升題目的效率與可讀性。</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="card">
+        <h2>內建排序與 key</h2>
+        <p>Python 與 C++ 都有高效的排序工具，善用 key / comparator 可以少寫很多程式碼。</p>
+        <pre><code># 排序學生 (分數遞減，名字遞增)
+students = [
+    ("Iris", 92),
+    ("Ben", 95),
+    ("Calvin", 95)
+]
+students.sort(key=lambda x: (-x[1], x[0]))
+print(students)</code></pre>
+        <div class="note">
+          <strong>注意：</strong>多重排序時可以用「先排序次要條件，再排序主要條件」，或像上例一樣利用 key。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>手寫排序與應用</h2>
+        <p>有時題目會要求你實作排序（例如只能用交換或只能比對部分元素），需要了解基本算法。</p>
+        <pre><code># 選擇排序
+arr = list(map(int, input().split()))
+n = len(arr)
+for i in range(n):
+    min_idx = i
+    for j in range(i + 1, n):
+        if arr[j] < arr[min_idx]:
+            min_idx = j
+    arr[i], arr[min_idx] = arr[min_idx], arr[i]
+print(arr)</code></pre>
+        <p>雖然效能不如內建 sort，但有助於理解比較與交換的過程，必要時也能修正為部分排序。</p>
+      </section>
+
+      <section class="card">
+        <h2>複雜度概念</h2>
+        <table class="table">
+          <tr>
+            <th>算法</th>
+            <th>平均時間複雜度</th>
+            <th>備註</th>
+          </tr>
+          <tr>
+            <td>Bubble / Selection / Insertion</td>
+            <td>O(n<sup>2</sup>)</td>
+            <td>資料量小或幾乎已排序時尚可</td>
+          </tr>
+          <tr>
+            <td>Merge / Quick / Timsort</td>
+            <td>O(n log n)</td>
+            <td>一般建議直接使用內建排序</td>
+          </tr>
+          <tr>
+            <td>Counting / Bucket / Radix</td>
+            <td>O(n + k)</td>
+            <td>適用於資料範圍固定且不大時</td>
+          </tr>
+        </table>
+        <div class="note">
+          <strong>估算技巧：</strong>當題目資料上限約 10<sup>5</sup> 時，O(n log n) 通常仍可接受；若達到 10<sup>6</sup> 以上，需搭配更快的演算法或 I/O 優化。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>練習建議</h2>
+        <ol class="list-clean">
+          <li>讀入學生姓名與分數，輸出排名表並標記相同分數的名次。</li>
+          <li>給定 N 個座標，按照距離原點的距離排序，距離相同時再依角度排序。</li>
+          <li>實作 counting sort，處理分數介於 0～100 的資料，並輸出每個分數出現次數。</li>
+        </ol>
+        <a class="btn" href="question-bank.html">回到題庫中心 →</a>
+      </section>
+
+      <footer class="footer-nav">
+        <a href="chapter4.html">← 回到章四</a>
+        <a href="chapter6.html">章六：資料結構與除錯 →</a>
+      </footer>
+    </div>
+  </main>
+</body>
+</html>
